@@ -1,0 +1,201 @@
+{% extends 'common.html.twig' %}
+
+{% block content%}
+<style>
+  .card-custom {
+    overflow: hidden;
+    min-height: 450px;
+    box-shadow: 0 0 15px rgba(10, 10, 10, 0.3);
+  }
+  
+  .card-custom-img {
+    height: 200px;
+    min-height: 200px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-color: inherit;
+  }
+  
+  /* First border-left-width setting is a fallback */
+  .card-custom-img::after {
+    position: absolute;
+    content: '';
+    top: 161px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-top-width: 40px;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 545px;
+    border-left-width: calc(575px - 5vw);
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: inherit;
+  }
+  
+  .card-custom-avatar img {
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(10, 10, 10, 0.3);
+    position: absolute;
+    top: 100px;
+    left: 1.25rem;
+    width: 100px;
+    height: 100px;
+  }  
+</style>
+
+
+    <h1>Pagina Impostazioni</h1>
+
+    <div class="container">
+        <div class="row mb-3">
+        
+        <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Aggiungi spiaggia
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Registra una nuova spiaggia</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/registra_spiaggia" method="POST">
+
+            <label for="basic-url" class="form-label">Qual'è il nome della tua spiaggia ?</label>
+            <div class="input-group mb-3">
+                <input type="text" name="nome" class="form-control">
+              </div>
+
+            <label for="basic-url" class="form-label">Descrivi la tua spiaggia?</label>
+            <div class="input-group mb-3">
+                <textarea name="descrizione" class="form-control"></textarea>
+              </div>
+            
+
+            <label for="basic-url" class="form-label">Su quante righe è divisa la tua spiaggia ?</label>
+            <div class="input-group mb-3">
+                <input type="number" class="form-control" name="righe">
+              </div>
+
+              <label for="basic-url" class="form-label">Quanti ombrelloni vuoi registrare per ogni riga ?</label>
+              <div class="input-group mb-3"> 
+                <input type="number" class="form-control" name="colonne">
+              </div>
+              
+              <label for="basic-url" class="form-label">Inserisci la città</label>
+            <div class="input-group mb-3">
+                <input type="text" name="citta" class="form-control">
+              </div>
+
+              <label for="basic-url" class="form-label">Inserisci la provincia</label>
+            <div class="input-group mb-3">
+                <input type="text" name="provincia" class="form-control">
+              </div>
+
+              <label for="basic-url" class="form-label">Inserisci la via</label>
+              <div class="input-group mb-3">
+                  <input type="text" name="indirizzo" class="form-control">
+                </div>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Registra</button>
+    </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="row">
+    {% for spiaggia in spiagge %}
+    <div class="col text-center">
+
+      <div class="card card-custom bg-white border-white border-0">
+        <div class="card-custom-img" style="background-image: url({{spiaggia.immagini[0]}});"></div>
+        <div class="card-custom-avatar">
+          <img class="img-fluid" src="{{spiaggia.immagini[1]}}"/>
+        </div>
+        <div class="card-body" style="overflow-y: auto">
+          <h4 class="card-title">{{spiaggia.nome}}</h4>
+          <p class="card-text">{{spiaggia.descrizione}}</p>
+        </div>
+        <div class="card-footer" style="background: inherit; border-color: inherit;">
+          <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#update{{spiaggia.id}}">Modifica Spiaggia</a>
+          <a href="/configura_spiaggia?id={{spiaggia.id}}" class="btn btn-outline-primary">Configura</a>
+          <a href="/elimina_spiaggia?id={{spiaggia.id}}" class="btn btn-danger">Elimina</a>
+        </div>
+      </div>
+     
+
+    </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="update{{spiaggia.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h1 class="modal-title fs-5" id="exampleModalLabel">{{spiaggia.nome}}</h1>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<form action="/registra_spiaggia" method="POST">
+    <input type="hidden" value="{{spiaggia.id}}" name="id"/>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Nome</span>
+        <input type="text" name="nome" value="{{spiaggia.nome}}" class="form-control">
+      </div>  
+      <div class="input-group mb-3">
+        <span class="input-group-text">Descrivi la tua spiaggia</span>
+        <textarea class="form-control" name="descrizione"></textarea>
+      </div>
+
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">In quante linne è suddivisa la spiaggia?</span>
+        <input type="number" name="righe" value="{{spiaggia.n_righe}}" class="form-control">
+      </div> 
+
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Quanti ombrelloni ci sono per ogni riga?</span>
+        <input type="number" name="colonne" value="{{spiaggia.n_ombr_riga}}" class="form-control">
+      </div> 
+      <label for="basic-url" class="form-label">Inserisci la città</label>
+    <div class="input-group mb-3">
+        <input type="text" name="citta" value="{{spiaggia.citta}}" class="form-control">
+      </div>
+
+      <label for="basic-url" class="form-label">Inserisci la provincia</label>
+    <div class="input-group mb-3">
+        <input type="text" name="provincia" value="{{spiaggia.provincia}}" class="form-control">
+      </div>
+
+      <label for="basic-url" class="form-label">Inserisci la via</label>
+      <div class="input-group mb-3">
+          <input type="text" name="indirizzo" value="{{spiaggia.indirizzo}}" class="form-control">
+        </div>            
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+<button type="submit" class="btn btn-primary">Salva modifiche</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<!-- end modal -->
+    {% endfor %}
+</div>
+       
+    </div>
+   
+    {% endblock %}

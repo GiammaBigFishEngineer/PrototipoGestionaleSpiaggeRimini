@@ -1,0 +1,214 @@
+{% extends 'common.html.twig' %}
+
+{% block content%}
+<style>
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 20px;
+    }
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+      width: 600px;
+      height: 350px;
+      background-color: #ffffff;
+      padding: 10px 30px 40px;
+    }
+    
+    .card h3 {
+      font-size: 22px;
+      font-weight: 600;
+      
+    }
+    
+    .drop_box {
+      margin: 10px 0;
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      border: 3px dotted #a3a3a3;
+      border-radius: 5px;
+    }
+    
+    .drop_box h4 {
+      font-size: 16px;
+      font-weight: 400;
+      color: #2e2e2e;
+    }
+    
+    .drop_box p {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #a3a3a3;
+    }
+    
+    .btn {
+      text-decoration: none;
+      background-color: #005af0;
+      color: #ffffff;
+      padding: 10px 20px;
+      border: none;
+      outline: none;
+      transition: 0.3s;
+    }
+    
+    .btn:hover{
+      text-decoration: none;
+      background-color: #ffffff;
+      color: #005af0;
+      padding: 10px 20px;
+      border: none;
+      outline: 1px solid #010101;
+    }
+    .form input {
+      margin: 10px 0;
+      width: 100%;
+      background-color: #e2e2e2;
+      border: none;
+      outline: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+    }
+    
+  </style>
+
+    <h2>Dashboard</h2>
+    <div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Gennaio</th>
+            <th scope="col">Febbraio</th>
+            <th scope="col">Marzo</th>
+            <th scope="col">Aprile</th>
+            <th scope="col">Maggio</th>
+            <th scope="col">Giugnio</th>
+            <th scope="col">Luglio</th>
+            <th scope="col">Agosto</th>
+            <th scope="col">Settembre</th>
+            <th scope="col">Ottobre</th>
+            <th scope="col">Novembre</th>
+            <th scope="col">Dicembre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for mese in mesi %}
+            <td>{{mese}}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+
+
+    
+    <h2>{{spiaggia.nome}}</h2>
+    <div class="row">
+      <div class="col">
+        <div id="carousel{{spiaggia.id}}" class="carousel slide">
+        
+          <div class="carousel-inner">
+              {% for immagine in spiaggia.immagini%}
+              {% if loop.first %}
+              <div class="carousel-item active" style="max-height: 350px;">
+              {% else %}
+              <div class="carousel-item" style="max-height: 350px;">
+                {% endif %}
+              <img src="{{immagine}}" class="d-block w-100">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="btn btn-primary mt-3" type="button" data-bs-target="#carousel{{spiaggia.id}}" data-bs-slide="prev">
+            prev
+          </button>
+          <button class="btn btn-primary mt-3" type="button" data-bs-target="#carousel{{spiaggia.id}}" data-bs-slide="next">
+          next
+          </button>
+        </div>
+      </div>
+      <div class="col">
+        <!--Aggiungi immagine-->
+        <div class="card">
+          <form action="/carica_files" method="POST" enctype="multipart/form-data">
+          <h3>Upload Files</h3>
+          <div class="drop_box">
+            <header>
+              <h4>Select File here</h4>
+            </header>
+            <p>Files Supported: PDF, TEXT, DOC , DOCX</p>
+           
+            <input type="file" multiple name="file[]" class="btn mb-3"/>
+            <input type="hidden" name="spiaggiaId" value="{{spiaggia.id}}"/>
+            <button class="btn" type="submit">Salva</button>
+           
+          </div>
+        </form>
+        </div>
+        <!--End Aggiungi immagine-->
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <div id="map"></div>
+    </div>
+      <div class="col">
+        <h2>Aggiungi Evento</h2>
+        <!--Form aggiungi evento-->
+        <form action="/crea_evento" method="POST" enctype="multipart/form-data">
+      
+          <div class="input-group mb-3">
+            <span class="input-group-text">Nome evento</span>
+            <input type="text" name="nome" class="form-control"/>
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">Data</span>
+            <input type="date" name="data" class="form-control"/>
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">Descrizione</span>
+            <textarea name="descrizione" class="form-control"></textarea>
+          </div>
+
+          <label for="basic-url" class="form-label">Immagine evento</label>
+          <div class="input-group mb-3">
+            <input type="file" name="file[]" class="form-control"/>
+          </div>
+          <input type="hidden" name="idSpiaggia" value="{{spiaggia.id}}"/>
+
+          <button type="submit" class="btn btn-primary">Invio</button>
+      </form>
+        <!--End Form aggiungi evento-->
+      </div>
+    </div>
+  </div>
+    <script>
+      function initMap() {
+        // Costruisci le coordinate
+        const latitude = {{spiaggia.coordinate[0]}}; // Esempio: Latitudine di New York City
+        const longitude = {{spiaggia.coordinate[1]}}; // Esempio: Longitudine di New York City
+        
+        // Crea un oggetto mappa
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: latitude, lng: longitude },
+          zoom: 12 // Livello di zoom iniziale
+        });
+        
+        // Aggiungi un marker sulla posizione
+        const marker = new google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: "Posizione"
+        });
+      }
+    </script>
+
+
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhjarX7Sv1a9w7hFlj8hN2b-IlBt7MGpo&callback=initMap" async defer></script>
+{% endblock %}

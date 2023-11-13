@@ -1,0 +1,32 @@
+<h1>Registrati</h1>
+
+    <form action="{{action}}" method="post">
+      <div class="container">
+        <label for="email"><b>Email: </b></label>
+        <input type="email" name="email" required>
+        
+        <br>
+        
+        <label for="email"><b>Fullname: </b></label>
+        <input type="text" name="fullname" required>
+        
+        <br>
+        
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="" name="password" id="password1" required>
+        <label for="password"><b>Ripeti Password</b></label>
+        <input type="password" placeholder="" name="password2" id="password2" required>
+
+        <button type="submit" id="submit">Registrati</button>
+
+        <br>
+       
+      </div>
+    
+      <div class="container">
+        <span class="psw"><a href="/forgot_password">Forgot Password?</a></span>
+      </div>
+      
+      <p>Don't have an account? <a href="/signup">Register</a> </p>
+
+    </form>
